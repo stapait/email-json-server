@@ -1,0 +1,17 @@
+{
+  "name": "email-json-server",
+  "version": "0.0.1",
+  "description": "Simple SMTP and IMAP servers with data stored in JSON files",
+  "main": "dist",
+  "scripts": {
+    "start-smtp": "nodemon src/smtp_server.js",
+    "start-imap": "nodemon src/imap_server.js",
+    "test": "mocha spec"
+  },
+  "author": "Fabio Stapait Pedarnig <stapait@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "chai": "3.5.0",
+    "mocha": "3.2.0"
+  }
+}
