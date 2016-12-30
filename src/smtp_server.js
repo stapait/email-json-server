@@ -11,10 +11,11 @@ function Email() {
 }
 
 var server = net.createServer(function (socket) {
-  socket.name = socket.remoteAddress + ":" + socket.remotePort
+  socket.name = socket.remoteAddress + ":" + socket.remotePort;
   emails[socket.name] = new Email(socket.name);
 
   socket.write('220 SMTP server ready\r\n');
+  socket.insideData = false;
 
   var completeData = '';
 
@@ -75,7 +76,7 @@ function handleCommand(socket, command) {
     return processMailFrom(socket, command);
   } else if (uppercaseCommand.startsWith('RCPT TO:')) {
     return processRcptTo(socket, command);
-  }  
+  }
 
   return processDefaultCommand(command);
 }
@@ -112,17 +113,16 @@ function processEhlo(data) {
 }
 
 function processMailFrom(socket, data) {
-  let commands = data.split(':');  
-  let command = commands[0];
-  let emailData = commands[1]
+  let commands = data.split(':');
+  let emailData = commands[1];
   let mailFrom;
-  
+
   try {
     console.log(typeof email);
     mailFrom = smtpUtils.extractEmail(emailData);
   } catch (err) {
     if (err instanceof InvalidEmailException) {
-      return getFormattedCommand(503, 'BAD');  
+      return getFormattedCommand(503, 'BAD');
     }
   }
 
@@ -132,21 +132,24 @@ function processMailFrom(socket, data) {
 }
 
 function processRcptTo(socket, data) {
-  let commands = data.split(':');  
-  let command = commands[0];
-  let emailData = commands[1]
+  let commands = data.split(':');
+  let emailData = commands[1];
   let rcptTo;
-  
+
   try {
     console.log(typeof email);
     rcptTo = smtpUtils.extractEmail(emailData);
   } catch (err) {
     if (err instanceof InvalidEmailException) {
-      return getFormattedCommand(503, 'BAD');  
+      return getFormattedCommand(503, 'BAD');
     }
   }
 
-  emails[socket.name].rcptTo = rcptTo;
+  if (emails[socket.name].rcptTo) {
+    emails[socket.name].rcptTo.push(rcptTo);
+  } else {
+    emails[socket.name].rcptTo = [rcptTo];
+  }
 
   return getFormattedCommand(250, 'OK');
 }
@@ -156,5 +159,10 @@ function processDefaultCommand(data) {
 }
 
 function processData(socket, data) {
+  socket.insideData = true;
+
+  console.log(emails[socket.name].mailFrom);
+  console.log(emails[socket.name].rcptTo);
+
   return getFormattedCommand(354, 'Start mail input; end with <CRLF>.<CRLF>');
 }

@@ -16,8 +16,8 @@ describe('sometest', () => {
         context('with valid email', () => {
             it('returns correct email',  () => {
                 expect(smtpUtils.extractEmail('aaa@bbb.com')).to.equal('aaa@bbb.com');
-                expect(smtpUtils.extractEmail('<aaa@bbb.com>')).to.equal('aaa@bbb.com')
-                expect(smtpUtils.extractEmail(' <ze@uol.com.br>')).to.equal('ze@uol.com.br')
+                expect(smtpUtils.extractEmail('<aaa@bbb.com>')).to.equal('aaa@bbb.com');
+                expect(smtpUtils.extractEmail(' <ze@uol.com.br>')).to.equal('ze@uol.com.br');
             });
         });
     });

@@ -5,4 +5,4 @@ function InvalidEmailException(message) {
 
 module.exports = {
   InvalidEmailException: InvalidEmailException
-}
+};

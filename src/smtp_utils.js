@@ -14,4 +14,4 @@ function extractEmail(data) {
 module.exports = {
   extractEmail: extractEmail,
   InvalidEmailException: InvalidEmailException
-}
+};
